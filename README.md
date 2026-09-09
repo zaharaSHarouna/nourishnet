@@ -1,4 +1,4 @@
-# FoodSave (prototype)
+# NourishNet (prototype)
 
 A community food-rescue platform prototype: React + Vite + Tailwind, with a
 tiny serverless function that proxies AI features to Claude.

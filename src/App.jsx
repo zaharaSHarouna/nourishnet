@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef, createContext, useContext } from "react";
 
 /* =========================================================================
-   FoodSave — community food-rescue prototype
+   NourishNet — community food-rescue prototype
    Impact > Safety > Accessibility > Trust > Usability > AI
    ========================================================================= */
 
@@ -18,7 +18,7 @@ const LANGS = [
 ];
 
 const DICT = {
-  appName: { en: "FoodSave", fr: "FoodSave", twi: "FoodSave", hausa: "FoodSave" },
+  appName: { en: "NourishNet", fr: "NourishNet", twi: "NourishNet", hausa: "NourishNet" },
   tagline: {
     en: "Save food. Feed communities.",
     fr: "Sauvez la nourriture. Nourrissez les communautés.",
@@ -26,18 +26,18 @@ const DICT = {
     hausa: "Ceci abinci. Ciyar da al'umma.",
   },
   heroSub: {
-    en: "FoodSave connects surplus food with people and organizations that can use it — helping communities reduce food waste and make better use of available food.",
-    fr: "FoodSave met en relation la nourriture excédentaire avec les personnes et organisations qui peuvent l'utiliser, pour réduire le gaspillage alimentaire.",
-    twi: "FoodSave de aduane a aka ma nnipa ne kuw ahorow a ehia won, na ɛboa amansan ma wɔntɔ aduane kwa.",
-    hausa: "FoodSave yana haɗa abinci mai yawa da mutane da ƙungiyoyin da za su iya amfani da shi, don rage ɓarnar abinci.",
+    en: "NourishNet connects surplus food with people and organizations that can use it — helping communities reduce food waste and make better use of available food.",
+    fr: "NourishNet met en relation la nourriture excédentaire avec les personnes et organisations qui peuvent l'utiliser, pour réduire le gaspillage alimentaire.",
+    twi: "NourishNet de aduane a aka ma nnipa ne kuw ahorow a ehia won, na ɛboa amansan ma wɔntɔ aduane kwa.",
+    hausa: "NourishNet yana haɗa abinci mai yawa da mutane da ƙungiyoyin da za su iya amfani da shi, don rage ɓarnar abinci.",
   },
   shareFood: { en: "Share extra food", fr: "Partager de la nourriture", twi: "Kyɛ aduane a aka", hausa: "Raba abincin da ya rage" },
   findFood: { en: "Find food", fr: "Trouver de la nourriture", twi: "Hwehwɛ aduane", hausa: "Nemo abinci" },
-  howItWorks: { en: "How FoodSave works", fr: "Comment ça marche", twi: "Sɛnea FoodSave yɛ adwuma", hausa: "Yadda FoodSave ke aiki" },
+  howItWorks: { en: "How NourishNet works", fr: "Comment ça marche", twi: "Sɛnea NourishNet yɛ adwuma", hausa: "Yadda NourishNet ke aiki" },
   step1Title: { en: "Share", fr: "Partager", twi: "Kyɛ", hausa: "Raba" },
   step1Body: { en: "Businesses, farms, households and organizations list surplus food.", fr: "Entreprises, fermes, ménages et organisations publient leur nourriture excédentaire.", twi: "Adwumakuw, mfuw, afie ne kuw ahorow de aduane a aka gu.", hausa: "Kasuwanci, gonaki, gidaje da ƙungiyoyi suna sanya abincin da ya rage." },
   step2Title: { en: "Match", fr: "Correspondre", twi: "Fa bom", hausa: "Daidaitawa" },
-  step2Body: { en: "FoodSave helps connect available food with nearby people and organizations.", fr: "FoodSave aide à relier la nourriture disponible aux personnes et organisations proches.", twi: "FoodSave boa ma aduane no kɔ nnipa a wɔbɛn hɔ nkyɛn.", hausa: "FoodSave yana taimakawa haɗa abinci da mutane da ƙungiyoyi kusa." },
+  step2Body: { en: "NourishNet helps connect available food with nearby people and organizations.", fr: "NourishNet aide à relier la nourriture disponible aux personnes et organisations proches.", twi: "NourishNet boa ma aduane no kɔ nnipa a wɔbɛn hɔ nkyɛn.", hausa: "NourishNet yana taimakawa haɗa abinci da mutane da ƙungiyoyi kusa." },
   step3Title: { en: "Collect", fr: "Récupérer", twi: "Gye", hausa: "Karɓa" },
   step3Body: { en: "The recipient arranges collection at the time the provider set.", fr: "Le destinataire organise la collecte à l'heure fixée par le fournisseur.", twi: "Nea ɔbɛgye no yɛ nhyehyɛe sɛ ɔbɛba abegye no.", hausa: "Wanda zai karɓa yana shirya karɓa a lokacin da mai bayarwa ya kayyade." },
   step4Title: { en: "Save", fr: "Sauver", twi: "Kora", hausa: "Ceto" },
@@ -49,7 +49,7 @@ const DICT = {
   demoData: { en: "Demo data", fr: "Données de démonstration", twi: "Nhwɛso Data", hausa: "Bayanan Gwaji" },
   browse: { en: "Browse food", fr: "Parcourir", twi: "Hwɛ Aduane", hausa: "Bincika Abinci" },
   dashboard: { en: "Dashboard", fr: "Tableau de bord", twi: "Dashboard", hausa: "Dashboard" },
-  assistant: { en: "FoodSave Assistant", fr: "Assistant FoodSave", twi: "FoodSave Boafo", hausa: "Mataimakin FoodSave" },
+  assistant: { en: "NourishNet Assistant", fr: "Assistant NourishNet", twi: "NourishNet Boafo", hausa: "Mataimakin NourishNet" },
   signIn: { en: "Sign in", fr: "Se connecter", twi: "Kɔ Mu", hausa: "Shiga" },
   signOut: { en: "Sign out", fr: "Se déconnecter", twi: "Fi Mu", hausa: "Fita" },
   notifications: { en: "Notifications", fr: "Notifications", twi: "Nkrasɛm", hausa: "Sanarwa" },
@@ -62,7 +62,7 @@ const DICT = {
   viewFood: { en: "View food", fr: "Voir la nourriture", twi: "Hwɛ Aduane No", hausa: "Duba Abinci" },
   requestFood: { en: "Request this food", fr: "Demander cette nourriture", twi: "Bisa Aduane Yi", hausa: "Nemi Wannan Abincin" },
   reportListing: { en: "Report this listing", fr: "Signaler cette annonce", twi: "Bɔ Amanneɛ", hausa: "Kai Rahoto" },
-  safetyReminder: { en: "Please check the food before accepting it. FoodSave does not certify food safety.", fr: "Veuillez vérifier la nourriture avant de l'accepter. FoodSave ne certifie pas la sécurité alimentaire.", twi: "Yɛsrɛ hwɛ aduane no ansa na woagye. FoodSave nkyerɛ sɛ aduane no yɛ dwira.", hausa: "Da fatan za a duba abincin kafin karɓa. FoodSave baya tabbatar da amincin abinci." },
+  safetyReminder: { en: "Please check the food before accepting it. NourishNet does not certify food safety.", fr: "Veuillez vérifier la nourriture avant de l'accepter. NourishNet ne certifie pas la sécurité alimentaire.", twi: "Yɛsrɛ hwɛ aduane no ansa na woagye. NourishNet nkyerɛ sɛ aduane no yɛ dwira.", hausa: "Da fatan za a duba abincin kafin karɓa. NourishNet baya tabbatar da amincin abinci." },
   verified: { en: "Verified provider", fr: "Fournisseur vérifié", twi: "Wɔahwɛ No", hausa: "Mai Bayarwa da aka Tabbatar" },
   noFoodNearby: { en: "No food available nearby right now.", fr: "Aucune nourriture disponible à proximité pour le moment.", twi: "Aduane biara nni hɔ mprempren.", hausa: "Babu abinci kusa a yanzu." },
   tryExpanding: { en: "Try expanding your search area or check again later.", fr: "Essayez d'élargir votre zone de recherche ou revenez plus tard.", twi: "Sɔ hwɛ ma wo hwehwɛ beae ntrɛw anaa san bɛhwɛ akyiri yi.", hausa: "Gwada faɗaɗa yankin bincikenka ko duba daga baya." },
@@ -162,7 +162,7 @@ async function askAI(system, userText) {
   }
 }
 
-const AI_GUARDRAIL = `You are the FoodSave Assistant, part of a community food-rescue platform.
+const AI_GUARDRAIL = `You are the NourishNet Assistant, part of a community food-rescue platform.
 You help with: explaining matches between food donations and nearby people/organizations,
 translating listing text, suggesting a food category from a description, flagging missing
 safety information, and helping users navigate the app.
@@ -304,7 +304,7 @@ export default function App() {
   }
 
   if (!loaded) {
-    return <div className="min-h-screen flex items-center justify-center bg-stone-50 text-stone-600">Loading FoodSave…</div>;
+    return <div className="min-h-screen flex items-center justify-center bg-stone-50 text-stone-600">Loading NourishNet…</div>;
   }
 
   const activeListing = listings.find((l) => l.id === activeListingId) || null;
@@ -402,8 +402,8 @@ function Header({ lang, onLang, profile, go, onSignOut, requestsForBadge, view }
   return (
     <header className="bg-white border-b border-stone-200 sticky top-0 z-40">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-3">
-        <button onClick={() => go("home")} className="flex items-center gap-2 font-serif text-xl font-semibold text-emerald-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-emerald-700 rounded" aria-label="FoodSave home">
-          <span aria-hidden="true" className="inline-block w-8 h-8 rounded-full bg-emerald-700 text-white grid place-items-center text-sm">FS</span>
+        <button onClick={() => go("home")} className="flex items-center gap-2 font-serif text-xl font-semibold text-emerald-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-emerald-700 rounded" aria-label="NourishNet home">
+          <span aria-hidden="true" className="inline-block w-8 h-8 rounded-full bg-emerald-700 text-white grid place-items-center text-sm">NN</span>
           {t("appName", lang)}
         </button>
         <div className="flex items-center gap-2">
@@ -444,7 +444,7 @@ function Footer({ lang, go }) {
         <button onClick={() => go("responsible-ai")} className="hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-emerald-700 rounded">{t("responsibleAI", lang)}</button>
         <span>Privacy</span>
         <span>Community guidelines</span>
-        <span>© 2026 FoodSave (prototype)</span>
+        <span>© 2026 NourishNet (prototype)</span>
       </div>
     </footer>
   );
@@ -1179,7 +1179,7 @@ function ResponsibleAI({ lang }) {
           <li>Translates listing text between English, French, Twi and Hausa (always labeled as machine translation)</li>
           <li>Suggests a food category from a description</li>
           <li>Flags when safety information (prep time, storage, best-before) looks incomplete</li>
-          <li>Answers questions about how to use FoodSave through the Assistant</li>
+          <li>Answers questions about how to use NourishNet through the Assistant</li>
         </ul>
       </section>
       <section className="mb-6">
@@ -1194,7 +1194,7 @@ function ResponsibleAI({ lang }) {
       </section>
       <section className="mb-6">
         <h2 className="font-semibold text-lg mb-2">Data privacy</h2>
-        <p className="text-stone-700 text-sm">FoodSave collects only what's needed to coordinate a donation: your name, role, general area, and listing details. Exact home addresses are shown only after a request is accepted. You can view, edit, or delete your information at any time.</p>
+        <p className="text-stone-700 text-sm">NourishNet collects only what's needed to coordinate a donation: your name, role, general area, and listing details. Exact home addresses are shown only after a request is accepted. You can view, edit, or delete your information at any time.</p>
       </section>
       <section className="mb-6">
         <h2 className="font-semibold text-lg mb-2">AI limitations</h2>
@@ -1214,7 +1214,7 @@ function ResponsibleAI({ lang }) {
 
 /* ---------- Assistant chat widget ----------------------------------------*/
 function AssistantWidget({ lang, open, setOpen, listings }) {
-  const [messages, setMessages] = useState([{ role: "assistant", text: "Hi! I'm the FoodSave Assistant. Ask me how to donate, find food, or anything about using the site." }]);
+  const [messages, setMessages] = useState([{ role: "assistant", text: "Hi! I'm the NourishNet Assistant. Ask me how to donate, find food, or anything about using the site." }]);
   const [input, setInput] = useState("");
   const [busy, setBusy] = useState(false);
   const endRef = useRef(null);
@@ -1227,7 +1227,7 @@ function AssistantWidget({ lang, open, setOpen, listings }) {
     setMessages((m) => [...m, userMsg]);
     setInput("");
     setBusy(true);
-    const context = `There are currently ${listings.filter((l) => l.status === "available").length} available food listings on FoodSave, across categories like bread, cooked meals, vegetables, farm produce and packaged food, mostly around Accra. The interface language is currently set to ${lang}.`;
+    const context = `There are currently ${listings.filter((l) => l.status === "available").length} available food listings on NourishNet, across categories like bread, cooked meals, vegetables, farm produce and packaged food, mostly around Accra. The interface language is currently set to ${lang}.`;
     const reply = await askAI(AI_GUARDRAIL, `${context}\n\nUser question: ${userMsg.text}`);
     setMessages((m) => [...m, { role: "assistant", text: reply || "I don't have enough information to answer that reliably right now. You can browse food or ask a human admin for help instead." }]);
     setBusy(false);
@@ -1235,7 +1235,7 @@ function AssistantWidget({ lang, open, setOpen, listings }) {
 
   return (
     <>
-      <button onClick={() => setOpen(!open)} aria-expanded={open} aria-label={open ? "Close FoodSave Assistant" : "Open FoodSave Assistant"} className="fixed bottom-20 md:bottom-6 right-4 z-50 w-14 h-14 rounded-full bg-emerald-700 text-white shadow-lg grid place-items-center text-xl focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-900">
+      <button onClick={() => setOpen(!open)} aria-expanded={open} aria-label={open ? "Close NourishNet Assistant" : "Open NourishNet Assistant"} className="fixed bottom-20 md:bottom-6 right-4 z-50 w-14 h-14 rounded-full bg-emerald-700 text-white shadow-lg grid place-items-center text-xl focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-900">
         {open ? "✕" : "💬"}
       </button>
       {open && (
@@ -1249,7 +1249,7 @@ function AssistantWidget({ lang, open, setOpen, listings }) {
             <div ref={endRef} />
           </div>
           <div className="p-2 border-t border-stone-200 flex gap-2">
-            <label htmlFor="assistant-input" className="sr-only">Message the FoodSave Assistant</label>
+            <label htmlFor="assistant-input" className="sr-only">Message the NourishNet Assistant</label>
             <input id="assistant-input" className={inputCls} value={input} onChange={(e) => setInput(e.target.value)} onKeyDown={(e) => e.key === "Enter" && send()} placeholder="Ask a question…" />
             <Button onClick={send} ariaLabel="Send message">➤</Button>
           </div>
