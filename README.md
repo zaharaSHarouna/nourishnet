@@ -56,6 +56,10 @@ This is a working **prototype**, not a production platform yet:
   structured to work with.
 - **Auth**: currently a simple demo role-picker with no password or
   verification. Replace with Supabase Auth before handling real users.
+  Admin access specifically requires a shared passcode (`ADMIN_PASSCODE`
+  env var, checked server-side in `/api/admin-auth.js`) instead of being
+  a self-service option — set that variable before you rely on it, and
+  treat it as a stopgap, not a real access-control system.
 - **Your Anthropic API key** stays server-side in the `/api/ai` function —
   never in the browser — but you're still responsible for normal API
   usage costs and rate limits once this is public.

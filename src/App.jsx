@@ -954,35 +954,85 @@ In 1-2 short plain sentences, explain the concrete reasons this could be a good 
   );
 }
 
-/* ---------- Auth (demo) --------------------------------------------------*/
+/* ---------- Auth (demo) --------------------------------------------------
+   Admin access is intentionally NOT one of the self-service roles below —
+   anyone could otherwise click "Administrator" and get moderation powers.
+   It's a separate, collapsed passcode flow checked server-side in
+   /api/admin-auth.js, so the real check happens outside the browser. */
 function AuthGate({ lang, onSignedIn, note }) {
   const [name, setName] = useState("");
   const [role, setRole] = useState("recipient");
   const [orgType, setOrgType] = useState("Restaurant");
+  const [adminMode, setAdminMode] = useState(false);
+  const [adminCode, setAdminCode] = useState("");
+  const [adminError, setAdminError] = useState("");
+  const [checking, setChecking] = useState(false);
+
+  async function submitAdmin() {
+    setChecking(true);
+    setAdminError("");
+    try {
+      const res = await fetch("/api/admin-auth", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code: adminCode }),
+      });
+      const data = await res.json();
+      if (data.ok) {
+        onSignedIn({ id: "u" + Math.random().toString(36).slice(2), name: name || "Administrator", role: "admin", lang });
+      } else {
+        setAdminError("That passcode isn't right, or admin sign-in isn't set up on this deployment yet.");
+      }
+    } catch {
+      setAdminError("Couldn't reach the server to check that. Try again in a moment.");
+    }
+    setChecking(false);
+  }
+
   return (
     <div className="py-12 max-w-md">
       <h1 className="font-serif text-3xl font-semibold mb-2">{t("signIn", lang)}</h1>
       <p className="text-stone-600 mb-1">This prototype uses a simple demo sign-in instead of a live account system.</p>
       {note && <p className="text-orange-800 text-sm mb-4">{note}</p>}
-      <Field label="Your name or organization name" id="auth-name" required>
-        <input id="auth-name" className={inputCls} value={name} onChange={(e) => setName(e.target.value)} />
-      </Field>
-      <Field label="I am a…" id="auth-role" required>
-        <select id="auth-role" className={inputCls} value={role} onChange={(e) => setRole(e.target.value)}>
-          <option value="provider">Food provider (restaurant, market, farm, household…)</option>
-          <option value="recipient">Person receiving food</option>
-          <option value="organization">Community organization (NGO, shelter, food bank…)</option>
-          <option value="admin">Administrator (demo)</option>
-        </select>
-      </Field>
-      {role === "provider" && (
-        <Field label="Type of provider" id="auth-orgtype">
-          <select id="auth-orgtype" className={inputCls} value={orgType} onChange={(e) => setOrgType(e.target.value)}>
-            {["Restaurant", "Supermarket", "Hotel", "Bakery", "Farm", "Household", "Event organizer"].map((o) => <option key={o}>{o}</option>)}
-          </select>
-        </Field>
+
+      {!adminMode ? (
+        <>
+          <Field label="Your name or organization name" id="auth-name" required>
+            <input id="auth-name" className={inputCls} value={name} onChange={(e) => setName(e.target.value)} />
+          </Field>
+          <Field label="I am a…" id="auth-role" required>
+            <select id="auth-role" className={inputCls} value={role} onChange={(e) => setRole(e.target.value)}>
+              <option value="provider">Food provider (restaurant, market, farm, household…)</option>
+              <option value="recipient">Person receiving food</option>
+              <option value="organization">Community organization (NGO, shelter, food bank…)</option>
+            </select>
+          </Field>
+          {role === "provider" && (
+            <Field label="Type of provider" id="auth-orgtype">
+              <select id="auth-orgtype" className={inputCls} value={orgType} onChange={(e) => setOrgType(e.target.value)}>
+                {["Restaurant", "Supermarket", "Hotel", "Bakery", "Farm", "Household", "Event organizer"].map((o) => <option key={o}>{o}</option>)}
+              </select>
+            </Field>
+          )}
+          <Button disabled={!name} onClick={() => onSignedIn({ id: "u" + Math.random().toString(36).slice(2), name, role, orgType, lang })}>{t("signIn", lang)}</Button>
+          <div className="mt-6 pt-4 border-t border-stone-200">
+            <button onClick={() => setAdminMode(true)} className="text-xs text-stone-400 hover:text-stone-600 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-emerald-700 rounded">
+              Administrator sign-in
+            </button>
+          </div>
+        </>
+      ) : (
+        <>
+          <Field label="Admin passcode" id="admin-code" required hint="Ask your platform administrator for this if you don't have it.">
+            <input id="admin-code" type="password" className={inputCls} value={adminCode} onChange={(e) => setAdminCode(e.target.value)} />
+          </Field>
+          {adminError && <p className="text-sm text-orange-800 mb-3" role="alert">{adminError}</p>}
+          <div className="flex gap-2">
+            <Button onClick={submitAdmin} disabled={!adminCode || checking}>{checking ? "Checking…" : t("signIn", lang)}</Button>
+            <Button variant="ghost" onClick={() => { setAdminMode(false); setAdminError(""); }}>{t("cancel", lang)}</Button>
+          </div>
+        </>
       )}
-      <Button disabled={!name} onClick={() => onSignedIn({ id: "u" + Math.random().toString(36).slice(2), name, role, orgType, lang })}>{t("signIn", lang)}</Button>
     </div>
   );
 }
